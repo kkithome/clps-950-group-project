@@ -7,7 +7,8 @@ numFiles = length(relevantFiles); % asssigns variable to the number of relevant 
 numRows = ceil(sqrt(numFiles)); % generates number of rows needed to plot each file
 numCols = ceil(numFiles/numRows); % generates number of columns
 
-figure;
+f = figure();
+f.WindowState = 'maximized';
 
 
 for i = 1:length(relevantFiles) % creates a scatterplot for each relevant File
@@ -21,9 +22,6 @@ for i = 1:length(relevantFiles) % creates a scatterplot for each relevant File
 
     subplot(numRows, numCols, i)
     scatter3(x, y, z, 'filled');
-    xlabel('X-axis');
-    ylabel('Y-axis');
-    zlabel('Z-axis');
     title(['Plot' num2str(i)]);
     grid on;
 
