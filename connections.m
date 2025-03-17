@@ -14,4 +14,5 @@ disp('Shuffled Words (4x4 Grid):');
 disp(shuffledWords);
 
 
-git init
+git commit -m 'created categories and found way to shuffle the categories useing the randperm function'
+
