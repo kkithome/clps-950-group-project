@@ -1,13 +1,14 @@
 
 function category_connections_gui()
     % Define categories and words
-    categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'};
-    categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'};
-    categories.Colors = {'Red', 'Blue', 'Green', 'Yellow'};
-    categories.Countries = {'USA', 'Canada', 'France', 'Japan'};
+    categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'}; %category 1: fruit options 
+    categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
+    categories.Colors = {'Red', 'Blue', 'Green', 'Yellow'}; % category 3: color options
+    categories.Countries = {'USA', 'Canada', 'France', 'Japan'}; % category 4: countries options
+    
 
     % Combine all words and shuffle
-    allWords = [categories.Fruits, categories.Animals, categories.Colors, categories.Countries];
+    allWords = [categories.Fruits, categories.Animals, categories.Colors, categories.Countries]; 
     shuffledWords = allWords(randperm(length(allWords)));
 
     % Reshape into a 4x4 matrix for display
