@@ -23,8 +23,8 @@ function category_connections_gui()
 
     % Create a grid layout for the words
     grid = uigridlayout(fig, [4, 4]);
-    grid.RowHeight = {'1x', '1x', '1x', '1x'};
-    grid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+    grid.RowHeight = {'5x', '5x', '5x', '5x'};
+    grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
 
     % Add buttons for each word in the grid
     for row = 1:4
@@ -41,7 +41,7 @@ function category_connections_gui()
     % Add a "Close" button
     closeButton = uibutton(fig, 'push', ...
         'Text', 'Close', ...
-        'Position', [250, 50, 100, 30], ...
+        'Position', [250, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig));
 
     % Wait for the figure to close
