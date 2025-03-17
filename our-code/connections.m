@@ -14,15 +14,35 @@ function category_connections_gui()
     % Reshape into a 4x4 matrix for display
     shuffledWords = reshape(shuffledWords, 4, 4)';
 
-    % Display the shuffled words
-    disp('Shuffled Words (4x4 Grid):');
-    disp(shuffledWords);
+
+    % figure fot the welcome page
+    fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
+
+    % Added text to the welcome page
+    welcomeText = uilabel(fig1, ...
+        'Text', 'Welcome to Category Connections! Click Play to Start the Game.' , ...
+        'Position', [50, 550, 500, 50], ...
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16); 
 
     % Create the GUI figure
-    fig = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 600]);
+    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 600], 'Visible', 'off');
+    figure(fig1); % puts the welcome page into focus when the game is initialized
+
+    % closes the welcome page and makes the grid visible
+    function startGame(~, ~)
+        fig1.Visible = 'off';
+        fig2.Visible = 'on';
+    end
+
+    % creates the start button and when clicked switches from the welcome page to the grid
+    startButton = uibutton(fig1, 'push', ...
+        'Text', 'Click to Play!', ...
+        'Position', [250, 200, 100, 30], ...
+        'ButtonPushedFcn', @startGame);
 
     % Create a grid layout for the words
-    grid = uigridlayout(fig, [4, 4]);
+    grid = uigridlayout(fig2, [4, 4]);
     grid.RowHeight = {'5x', '5x', '5x', '5x'};
     grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
 
@@ -39,13 +59,12 @@ function category_connections_gui()
     end
 
     % Add a "Close" button
-    closeButton = uibutton(fig, 'push', ...
+    closeButton = uibutton(fig2, 'push', ...
         'Text', 'Close', ...
         'Position', [250, 0, 100, 30], ...
-        'ButtonPushedFcn', @(btn, event) close(fig));
+        'ButtonPushedFcn', @(btn, event) close(fig2));
 
-    % Wait for the figure to close
-    uiwait(fig);
+
 
     % End the function
     end
