@@ -5,7 +5,7 @@ function category_connections_gui()
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
     categories.Colors = {'Red', 'Blue', 'Green', 'Yellow'}; % category 3: color options
     categories.Countries = {'USA', 'Canada', 'France', 'Japan'}; % category 4: countries options
-    
+
 
     % Combine all words and shuffle
     allWords = [categories.Fruits, categories.Animals, categories.Colors, categories.Countries]; 
@@ -23,8 +23,10 @@ function category_connections_gui()
 
     % Create a grid layout for the words
     grid = uigridlayout(fig, [4, 4]);
-    grid.RowHeight = {'5x', '5x', '5x', '5x'};
-    grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
+    grid.RowHeight = {'1x', '1x', '1x', '1x'};
+    grid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+
+    selectedButtons = false(4, 4); % try to add to submit branch to see if works 
 
     % Add buttons for each word in the grid
     for row = 1:4
@@ -38,11 +40,32 @@ function category_connections_gui()
         end
     end
 
+     % Function to toggle button selection   % tried adding to submit branch to test
+     function toggleSelection(btn, row, col)
+        % Toggle the selection state
+        selectedButtons(row, col) = ~selectedButtons(row, col); 
+        % Change the button appearance based on selection
+            if selectedButtons(row, col)
+            btn.BackgroundColor = [0.8, 0.8, 1]; % Light blue for selected
+            else
+            btn.BackgroundColor = [0.94, 0.94, 0.94]; % Default gray for unselected
+            end
+        end  
+        %end where shayla was trying to use submit branch to mess w it 
+
+   % Add a "Submit" button       % tried adding to submit branch to test
+   submitButton = uibutton(fig, 'push', ...
+    'Text', 'Submit', ...
+    'Position', [400, 50, 100, 30], ...
+    'ButtonPushedFcn', @(btn, event) evaluateGroups());
+
     % Add a "Close" button
     closeButton = uibutton(fig, 'push', ...
         'Text', 'Close', ...
-        'Position', [250, 0, 100, 30], ...
+        'Position', [250, 50, 100, 30], ... %chooses the position,[x, y, width, height] 
         'ButtonPushedFcn', @(btn, event) close(fig));
+
+   
 
     % Wait for the figure to close
     uiwait(fig);
