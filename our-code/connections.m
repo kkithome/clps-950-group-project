@@ -1,4 +1,4 @@
-function connections()
+function category_connections_gui()
     % Define categories and words
     categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'}; %category 1: fruit options 
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
@@ -18,32 +18,41 @@ function connections()
     fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
 
     % Added text to the welcome page
-    uilabel(fig1, ...
+    welcomeText = uilabel(fig1, ...
         'Text', 'Welcome to Category Connections! Click the button below to Start the Game.' , ...
         'Position', [50, 550, 500, 50], ...
         'HorizontalAlignment', 'center', ...
-        'FontSize', 16); % adds text to the welcome page
+        'FontSize', 16); 
 
     % Create the GUI figure
-    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 600], 'Visible', 'off');
-    figure(fig1); % puts the welcome page into focus when the game is initialized
-
-    % closes the welcome page and makes the grid visible
-    function startGame(~, ~)
-        fig1.Visible = 'off';
-        fig2.Visible = 'on';
-    end
+    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 700], 'Visible', 'off');
 
     % creates the start button and when clicked switches from the welcome page to the grid
-    uibutton(fig1, 'push', ...
+    startButton = uibutton(fig1, 'push', ...
         'Text', 'Click to Play!', ...
         'Position', [250, 200, 100, 30], ...
         'ButtonPushedFcn', @startGame);
+
 
     % Create a grid layout for the words
     grid = uigridlayout(fig2, [4, 4]);
     grid.RowHeight = {'5x', '5x', '5x', '5x'};
     grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
+
+    % figure fot the toggle/ category choose page
+    fig3 = uifigure('Name', 'Correct! Select a catgory', 'Position', [100, 100, 600, 600], 'Visible', 'off');
+
+    % Added text to the welcome page
+    Toggleslidetext = uilabel(fig3, ...
+        'Text', 'Correct! Select a category from the drop down!' , ...
+        'Position', [50, 550, 500, 50], ...
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16); 
+
+        % closes the grid and then show the toggle/ category choosing slide
+    
+    figure(fig1); % puts the welcome page into focus when the game is initialized
+
 
     function wordButtonPushed(btn)
         if ismember(btn.Text, selectedWords) % checks to see if the word has been selected already
@@ -74,18 +83,31 @@ function connections()
         % if four words are already selected:
             % tells the user that four words
 
-    selectedWords = {}; 
-        
+    selectedWords = {};
+
 
     % Add a "Close" button
-    uibutton(fig2, 'push', ...
+    closeButton = uibutton(fig2, 'push', ...
         'Text', 'Close', ...
-        'Position', [250, 0, 100, 30], ...
+        'Position', [350, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig2));
 
+    submitButton = uibutton(fig2, 'push', ...
+        'Text', 'Submit', ...
+        'Position', [150, 0, 100, 30], ...
+        'ButtonPushedFcn', @submit);    
 
+    function startGame(~, ~)
+        fig1.Visible = 'off';
+        fig3.Visible = 'off';
+        fig2.Visible = 'on';
 
+    end
 
-
+    function submit(~, ~)
+        fig1.Visible = 'off';
+        fig2.Visible = 'off';
+        fig3.Visible = 'on';
+    end    
     % End the function
     end
