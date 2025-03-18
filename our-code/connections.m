@@ -1,4 +1,4 @@
-function connections()
+function category_connections_gui()
     % Define categories and words
     categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'}; %category 1: fruit options 
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
@@ -21,11 +21,11 @@ function connections()
     fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
 
     % Added text to the welcome page
-    uilabel(fig1, ...
+    welcomeText = uilabel(fig1, ...
         'Text', 'Welcome to Category Connections! Click the button below to Start the Game.' , ...
         'Position', [50, 550, 500, 50], ...
         'HorizontalAlignment', 'center', ...
-        'FontSize', 16); % adds text to the welcome page
+        'FontSize', 16); 
 
     % Create the GUI figure
     fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 600], 'Visible', 'off');
@@ -57,6 +57,7 @@ function connections()
         shuffledWords = reshape(shuffledWords, 4, 4);
         displayGrid();
     end
+
 
     % Create a grid layout for the words
     grid = uigridlayout(fig2, [4, 4]);
