@@ -74,12 +74,8 @@ function connections()
         % if four words are already selected:
             % tells the user that four words
 
-    selectedWords = {};
-
-    
-
-
-
+    selectedWords = {}; 
+        
 
     % Add a "Close" button
     uibutton(fig2, 'push', ...
