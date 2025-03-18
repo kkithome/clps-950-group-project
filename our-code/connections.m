@@ -46,23 +46,49 @@ function category_connections_gui()
     grid.RowHeight = {'5x', '5x', '5x', '5x'};
     grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
 
+    function wordButtonPushed(btn)
+        if ismember(btn.Text, selectedWords) % checks to see if the word has been selected already
+            selectedWords(strcmp(selectedWords, btn.Text)) = [];
+            btn.BackgroundColor = [0.94, 0.94, 0.94];
+        elseif numel(selectedWords) < 4
+            selectedWords{end+1} = btn.Text; % if less than four words are selected than the selected word is added to the Selected Word
+            btn.BackgroundColor = [0.6, 0.8, 1]; % when added the word is higlighted in blue
+        end
+    end
+
     % Add buttons for each word in the grid
     for row = 1:4
         for col = 1:4
             % Create a button for each word
             wordButton = uibutton(grid, 'push', ...
                 'Text', shuffledWords{row, col}, ...
-                'ButtonPushedFcn', @(btn, event) wordButtonPushed(app, btn));
+                'ButtonPushedFcn', @(btn, ~) wordButtonPushed(btn));
             wordButton.Layout.Row = row;
             wordButton.Layout.Column = col;
         end
     end
+
+    % When a word is selected, the game should:
+        % if less than four words are selected:
+            % Highlight the box
+            % add the word to an going list
+        % if four words are already selected:
+            % tells the user that four words
+
+    selectedWords = {};
+
+    
+
+
+
 
     % Add a "Close" button
     closeButton = uibutton(fig2, 'push', ...
         'Text', 'Close', ...
         'Position', [250, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig2));
+
+
 
 
 
