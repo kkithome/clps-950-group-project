@@ -109,24 +109,7 @@ function category_connections_gui()
         'ButtonPushedFcn', @submit);  
         'Visible'; 'off'; % Start hidden;
 
-%trying to make it so that the 'submit' button only shows after four are
-%selected 
-        function wordButtonPushed(btn)
-            if ismember(btn.Text, selectedWords) % If word is already selected, remove it
-        selectedWords(strcmp(selectedWords, btn.Text)) = [];
-        btn.BackgroundColor = [0.94, 0.94, 0.94];
-            elseif numel(selectedWords) < 4 % Allow selection only if fewer than 4 words
-        selectedWords{end+1} = btn.Text;
-        btn.BackgroundColor = [0.6, 0.8, 1]; % Highlight selection
-        end
 
-    % Show submit button ONLY if exactly 4 words are selected
-    if numel(selectedWords) == 4
-        submitButton.Visible = 'on';
-    else
-        submitButton.Visible = 'off';
-    end
-end
 
     function startGame(~, ~)
         fig1.Visible = 'off';
