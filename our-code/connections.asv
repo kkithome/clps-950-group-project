@@ -18,7 +18,7 @@ function category_connections_gui()
     fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
 
     % Added text to the welcome page
-    uilabel(fig1, ...
+    welcomeText = uilabel(fig1, ...
         'Text', ['Welcome to Category Connections! Click the button below to Start the Game. ' ...
         'The goal is to group four similar words together into one category!   ' ...
         'Created by Kaluki, Selam, and Shayla'], ...
@@ -31,30 +31,10 @@ function category_connections_gui()
     fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 700], 'Visible', 'off');
 
     % creates the start button and when clicked switches from the welcome page to the grid
-    uibutton(fig1, 'push', ...
+    startButton = uibutton(fig1, 'push', ...
         'Text', 'Click to Play!', ...
         'Position', [250, 200, 100, 30], ...
         'ButtonPushedFcn', @startGame);
-
-    function displayGrid()
-        delete(grid.Children);
-        for row = 1:4
-            for col = 1:4
-                wordButton = uibutton(grid, 'push', ...
-                'Text', shuffledWords{row, col}, ...
-                'ButtonPushedFcn', @(btn, ~) wordButtonPushed(btn));
-                wordButton.Layout.Row = row;
-                wordButton.Layout.Column = col;
-            end
-        end
-    end
-
-
-    function shuffleWords()
-        shuffledWords = allWords(randperm(length(allWords)));
-        shuffledWords = reshape(shuffledWords, 4, 4);
-        displayGrid();
-    end
 
 
     % Create a grid layout for the words
@@ -68,7 +48,7 @@ function category_connections_gui()
     % figure for if the connection is incorret
     fig4 = uifigure('Name', 'Incorrect', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
-    uilabel(fig4, ...
+    Incorrect_group = uilabel(fig4, ...
         'Text', 'Sorry, try again.' , ...
         'Position', [50, 550, 500, 50], ...
         'HorizontalAlignment', 'center', ...
@@ -76,7 +56,7 @@ function category_connections_gui()
     % add text to incorrect page: 
 
     % Added text to the welcome page
-    uilabel(fig3, ...
+    Toggleslidetext = uilabel(fig3, ...
         'Text', 'Correct! Select a category from the drop down!' , ...
         'Position', [50, 550, 500, 50], ...
         'HorizontalAlignment', 'center', ...
@@ -118,22 +98,17 @@ function category_connections_gui()
 
 
     % Add a "Close" button
-    uibutton(fig2, 'push', ...
+    closeButton = uibutton(fig2, 'push', ...
         'Text', 'Close', ...
         'Position', [350, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig2));
 
-    uibutton(fig2, 'push', ...
+    submitButton = uibutton(fig2, 'push', ...
         'Text', 'Submit', ...
-        'Position', [250, 0, 100, 30], ...
+        'Position', [150, 0, 100, 30], ...
         'ButtonPushedFcn', @submit);  
         'Visible'; 'off'; % Start hidden;
-    
-    uibutton(fig2, 'push', ...
-        'Text', 'Shuffle Words',...
-        'Position', [150, 0, 100, 30], ...
-        'ButtonPushedFcn', @(btn, event) shuffleWords());
-   
+
 
 
     function startGame(~, ~)
@@ -141,23 +116,22 @@ function category_connections_gui()
         fig3.Visible = 'off';
         fig2.Visible = 'on';
         fig4.Visible = 'off';
-        displayGrid()
 
     end
 
     % making the function that will make it so once you press four words, if they are in the same category takes you to the next "correct" screen
     % if not, it will take you to incorrect screen
     function submit(~, ~)
-        correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries};
+        correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries}; %make sets of words to choose from 
         
-        isCorrect = false;
+        isCorrect = false; %set of words chosen 
         for i = 1:length(correctSets) 
             if isempty(setdiff(selectedWords, correctSets{i})) && length(selectedWords) == length(correctSets{i}) %setdiff will make it so that the order of word selection won't matter 
                 isCorrect = true;
                 break;
             end
         end
-    
+            % moving from grid screen to either the correct or incorrect next screen once buttons selected. 
         if isCorrect
             fig1.Visible = 'off';
             fig2.Visible = 'off';
@@ -166,25 +140,24 @@ function category_connections_gui()
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig4.Visible = 'on';
-    
-        
-            selectedWords = {}; % Reset selection after submission
 
+            
             % Start a timer to hide fig4 after 5 seconds and bring back fig2
             t = timer('StartDelay', 5, 'TimerFcn', @(~,~) closeIncorrectScreen());
-            start(t);
-        
-            selectedWords = {}; % Reset selection after submission
-         end
+         start(t);
+        end
+
+    selectedWords = {}; % Reset selection after submission
     end
 
-   function closeIncorrectScreen()
-       if isvalid(fig4)  % Check if fig4 still exists before modifying it
-       fig4.Visible = 'off'; % Hide incorrect screen
-       end
-       if isvalid(fig2)  % Ensure fig2 exists
-       fig2.Visible = 'on';  % Bring back the game grid
-       end
-    end    
-    % End the function
-end
+    function closeIncorrectScreen()
+        if isvalid(fig4)  % Check if fig4 still exists before modifying it
+        fig4.Visible = 'off'; % Hide incorrect screen
+        end
+        if isvalid(fig2)  % Ensure fig2 exists
+        fig2.Visible = 'on';  % Bring back the game grid
+        end
+
+    
+    end
+end 
