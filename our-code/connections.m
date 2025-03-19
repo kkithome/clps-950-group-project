@@ -75,13 +75,21 @@ function category_connections_gui()
         'FontSize', 16); 
     % add text to incorrect page: 
 
-    % Added text to the welcome page
+    
+    
+
+    celebrationArt = sprintf(['      ☆ ☆ ☆ ☆ ☆      \n' ...
+                            '   ☆ (づ｡◕‿‿◕｡)づ ☆   \n' ...
+                            ' ☆  Congrats!!!  ☆  \n' ...
+                            '   ☆ You got it! ☆   \n' ...
+                            '      ☆ ☆ ☆ ☆ ☆      ']);
     uilabel(fig3, ...
-        'Text', 'Correct! Select a category from the drop down!' , ...
+        'Text', celebrationArt , ...
         'Position', [50, 550, 500, 50], ...
         'HorizontalAlignment', 'center', ...
         'FontSize', 16); 
-        % closes the grid and then show the toggle/ category choosing slide
+
+
     
 
     figure(fig1); % puts the welcome page into focus when the game is initialized
@@ -154,11 +162,12 @@ function category_connections_gui()
             if isempty(setdiff(selectedWordSet, correctCategoryWords)) && (numel(selectedWordSet)  && numel(correctCategoryWords))
                 uialert(fig3, 'Correct!');
                 dropdownItems(strcmp(dropdownItems, selectedCategory)) = [];
-                resetSelection();
+                
             else
                 uialert(fig3, 'Incorrect, please try again.')
-                resetSelection();
             end
+            resetSelection();
+            dd.Value = '';
         end
 
         uibutton(fig3, 'push', ...
@@ -198,13 +207,18 @@ function category_connections_gui()
             fig2.Visible = 'off';
             fig3.Visible = 'on';
             dropdownFunctionality()
+
+            
+            
         else
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig4.Visible = 'on';
         end
         
-        selectedWords = {}; % Reset selection after submission
+        t = timer('StartDelay', 3, 'TimerFcn', @(~,~) closeIncorrectScreen());
+            start(t);
+            resetSelection();
     end   
     
     
@@ -213,8 +227,17 @@ function category_connections_gui()
     function resetSelection()
         selectedWords = {};
         displayGrid();
-        dd.Value = '';
     end
+
+    function closeIncorrectScreen()
+        if isvalid(fig4)  % Check if fig4 still exists before modifying it
+        fig4.Visible = 'off'; % Hide incorrect screen
+        fig3.Visible = 'off'; % hide celebrate 
+        end
+        if isvalid(fig2)  % Ensure fig2 exists
+        fig2.Visible = 'on';  % Bring back the game grid
+        end
+        end 
 
 
     end
