@@ -109,12 +109,6 @@ function category_connections_gui()
         end
     end
 
-    % When a word is selected, the game should:
-        % if less than four words are selected:
-            % Highlight the box
-            % add the word to an going list
-        % if four words are already selected:
-            % allow the user to submit 
 
 
     % Add a "Close" button
@@ -134,20 +128,48 @@ function category_connections_gui()
         'Position', [150, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) shuffleWords());
 
-     dd = uidropdown(fig3, "Items", ["Fruits", "Animals", "Countries", "Colors"]);
      s1 = uistyle("BackgroundColor", "#ffec33"); %yellow
      s2 = uistyle("BackgroundColor", "#8adc75"); % green
      s3 = uistyle("BackgroundColor", "#75a9dc"); % blue
-     s4 = uistyle("BackgroundColor", "#ac75dc"); % purple
+     s4 = uistyle("BackgroundColor", "#ac75dc"); 
 
-     addStyle(dd, s1, "item", 3);
-     addStyle(dd, s2, "item", 2);
-     addStyle(dd, s3, "item", 1);
-     addStyle(dd, s4, "item", 4);
+    function dropdownFunctionality()
+        dropdownItems = {'Fruits', 'Animals', 'Colors', 'Countries'}
+        dd = uidropdown(fig3, ...
+        'Items', dropdownItems, ...
+        'Position', [200, 300, 200, 30], ...
+        'Visible', 'on');
+        
+        addStyle(dd, s1, "item", 3);
+        addStyle(dd, s2, "item", 2);
+        addStyle(dd, s3, "item", 1);
+        addStyle(dd, s4, "item", 4);
 
-   
-   
+        function checkDropdown(dd)
+            selectedCategory = dd.Value;
+            selectedWordSet  = selectedWords;
+            
+            correctCategoryWords = categories.(selectedCategory);
+            
+            if isempty(setdiff(selectedWordSet, correctCategoryWords)) && (numel(selectedWordSet)  && numel(correctCategoryWords))
+                uialert(fig3, 'Correct!');
+                dropdownItems(strcmp(dropdownItems, selectedCategory)) = [];
+                resetSelection();
+            else
+                uialert(fig3, 'Incorrect, please try again.')
+                resetSelection();
+            end
+        end
 
+        uibutton(fig3, 'push', ...
+            'Text', 'Submit', ...
+            'Position', [100, 200, 100, 30], ...
+            'ButtonPushedFcn', @(btn, ~) checkDropdown(dd));
+    end
+     
+% purple
+
+    
 
     function startGame(~, ~)
         fig1.Visible = 'off';
@@ -175,6 +197,7 @@ function category_connections_gui()
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig3.Visible = 'on';
+            dropdownFunctionality()
         else
             fig1.Visible = 'off';
             fig2.Visible = 'off';
@@ -182,6 +205,17 @@ function category_connections_gui()
         end
         
         selectedWords = {}; % Reset selection after submission
-    end    
-    % End the function
+    end   
+    
+    
+    
+
+    function resetSelection()
+        selectedWords = {};
+        displayGrid();
+        dd.Value = '';
     end
+
+
+    end
+    % End the function
