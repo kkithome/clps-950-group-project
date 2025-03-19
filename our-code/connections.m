@@ -156,9 +156,9 @@ function category_connections_gui()
         dropdownItems = {'Fruits', 'Animals', 'Colors', 'Countries'}
         dd = uidropdown(fig3, ...
         'Items', dropdownItems, ...
-        'FontName', 'Georgia', ...
         'Position', [200, 300, 200, 30], ...
         'Visible', 'on');
+
         
         addStyle(dd, s1, "item", 3);
         addStyle(dd, s2, "item", 2);
@@ -171,15 +171,17 @@ function category_connections_gui()
             
             correctCategoryWords = categories.(selectedCategory);
             
-            if isempty(setdiff(selectedWordSet, correctCategoryWords)) && (numel(selectedWordSet)  && numel(correctCategoryWords))
+            if isempty(setdiff(selectedWordsSet, correctCategoryWords)) && (length(selectedWordSet) == length(correctCategoryWords))
                 uialert(fig3, 'Correct!');
                 dropdownItems(strcmp(dropdownItems, selectedCategory)) = [];
+                resetSelection();
+                dd.Value = '';
                 
             else
-                uialert(fig3, 'Incorrect, please try again.')
-            end
-            resetSelection();
-            dd.Value = '';
+                uialert(fig3, 'Incorrect, please try again.');
+                resetSelection();
+                dd.Value = '';
+            end  
         end
 
         uibutton(fig3, 'push', ...
@@ -188,8 +190,6 @@ function category_connections_gui()
             'Position', [100, 200, 100, 30], ...
             'ButtonPushedFcn', @(btn, ~) checkDropdown(dd));
     end
-     
-% purple
 
     
 
@@ -219,7 +219,8 @@ function category_connections_gui()
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig3.Visible = 'on';
-            dropdownFunctionality()
+            dropdownFunctionality();
+            resetSelection();
 
             
             
@@ -254,9 +255,11 @@ function category_connections_gui()
         if isvalid(fig2)  % Ensure fig2 exists
         fig2.Visible = 'on';  % Bring back the game grid
         end
-        end 
+    end 
+
+end
 
 
-    end
+
     % End the function
 
