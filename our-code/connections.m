@@ -4,7 +4,7 @@ function category_connections_gui()
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
     categories.Colors = {'Red', 'Blue', 'Green', 'Yellow'}; % category 3: color options
     categories.Countries = {'USA', 'Canada', 'France', 'Japan'}; % category 4: countries options
-    
+
 
     % Combine all words and shuffle
     allWords = [categories.Fruits, categories.Animals, categories.Colors, categories.Countries]; 
@@ -80,8 +80,8 @@ function category_connections_gui()
         'FontSize', 16); 
     % add text to incorrect page: 
 
-    
-    
+
+
 
     celebrationArt = sprintf(['      ☆ ☆ ☆ ☆ ☆      \n' ...
                             '   ☆ (づ｡◕‿‿◕｡)づ ☆   \n' ...
@@ -96,7 +96,7 @@ function category_connections_gui()
         'FontSize', 16); 
 
 
-    
+
 
     figure(fig1); % puts the welcome page into focus when the game is initialized
     selectedWords = {};
@@ -140,7 +140,7 @@ function category_connections_gui()
         'Position', [250, 15, 100, 30], ...
         'ButtonPushedFcn', @submit);  
         'Visible'; 'off'; % Start hidden;
-    
+
     uibutton(fig2, 'push', ...
         'Text', 'Shuffle Words',...
         'FontName', 'Georgia', ...
@@ -152,111 +152,117 @@ function category_connections_gui()
      s3 = uistyle("BackgroundColor", "#75a9dc"); % blue
      s4 = uistyle("BackgroundColor", "#ac75dc"); 
 
-    function dropdownFunctionality()
-        dropdownItems = {'Fruits', 'Animals', 'Colors', 'Countries'}
+     function dropdownFunctionality()
+        dropdownItems = {'Fruits', 'Animals', 'Colors', 'Countries'};
         dd = uidropdown(fig3, ...
-        'Items', dropdownItems, ...
-        'FontName', 'Georgia', ...
-        'Position', [200, 300, 200, 30], ...
-        'Visible', 'on');
-        
+            'Items', dropdownItems, ...
+            'FontName', 'Georgia', ...
+            'Position', [200, 300, 200, 30], ...
+            'Visible', 'on');
+    
         addStyle(dd, s1, "item", 3);
         addStyle(dd, s2, "item", 2);
         addStyle(dd, s3, "item", 1);
         addStyle(dd, s4, "item", 4);
-
+    
         function checkDropdown(dd)
-            selectedCategory = dd.Value;
-            selectedWordSet  = selectedWords;
+            selectedCategory = dd.Value; % Get the selected category from the dropdown
+            selectedWordSet = selectedWords; % Get the selected words
             
-            correctCategoryWords = categories.(selectedCategory);
+            correctCategoryWords = categories.(selectedCategory); % Get the correct words for the selected category
             
-            if isempty(setdiff(selectedWordSet, correctCategoryWords)) && (numel(selectedWordSet)  && numel(correctCategoryWords))
-                uialert(fig3, 'Correct!');
-                dropdownItems(strcmp(dropdownItems, selectedCategory)) = [];
+            % Check if the selected words match the correct category
+            if isempty(setdiff(selectedWordSet, correctCategoryWords)) && ...
+               (numel(selectedWordSet) == numel(correctCategoryWords))
+                % Correct category selected
+                uialert(fig3, 'Correct!', 'Success');
                 
+                % Display the selected category and words
+                uilabel(fig3, ...
+                    'Text', sprintf(' Category: %s\nSelected Words: %s', selectedCategory, strjoin(selectedWordSet, ', ')), ...
+                    'Position', [50, 100, 500, 100], ...
+                    'HorizontalAlignment', 'center', ...
+                    'FontSize', 14, ...
+                    'WordWrap', 'on');
+                
+                % Transition to the main game grid after a short delay
+                t = timer('StartDelay', 3, 'TimerFcn', @(~,~) backToMain());
+                start(t);
             else
-                uialert(fig3, 'Incorrect, please try again.')
+                % Incorrect category selected
+                uialert(fig3, 'Incorrect, please try again.', 'Error');
+                
+                % Stay on the category selection screen to allow the player to try again
             end
+            
+            % Reset the selection for the next round
             resetSelection();
             dd.Value = '';
         end
-
+    
         uibutton(fig3, 'push', ...
             'Text', 'Submit', ...
             'FontName', 'Georgia', ...
             'Position', [100, 200, 100, 30], ...
             'ButtonPushedFcn', @(btn, ~) checkDropdown(dd));
     end
-     
-% purple
-
     
-
+    % Start game function
     function startGame(~, ~)
         fig1.Visible = 'off';
         fig3.Visible = 'off';
         fig2.Visible = 'on';
         fig4.Visible = 'off';
-        displayGrid()
-
+        displayGrid();
     end
-
-    % making the function that will make it so once you press four words, if they are in the same category takes you to the next "correct" screen
-    % if not, it will take you to incorrect screen
+    
+    % Submit function
     function submit(~, ~)
         correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries};
-        
-        isCorrect = false;
-        for i = 1:length(correctSets) 
-            if isempty(setdiff(selectedWords, correctSets{i})) && length(selectedWords) == length(correctSets{i}) %setdiff will make it so that the order of word selection won't matter 
+        categoryNames = fieldnames (categories);
+
+      
+        for i = 1:length(correctSets)
+            if isequal(sort(selectedWords), sort(correctSets{i})) 
                 isCorrect = true;
                 break;
             end
         end
     
         if isCorrect
+            disp('Correct set selected! Moving to dropdown...');
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig3.Visible = 'on';
-            dropdownFunctionality()
-
-            
-            
+            dropdownFunctionality();
         else
+            disp('Incorrect set selected. Showing incorrect screen.');
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig4.Visible = 'on';
-
-
+    
+            % Fix for incorrect screen timeout
             t = timer('StartDelay', 3, 'TimerFcn', @(~,~) closeIncorrectScreen());
             start(t);
             resetSelection();
-
         end
-        
-       
     end   
     
-    
-    
-
+    % Reset selection function
     function resetSelection()
-        selectedWords = {};
+        disp('Resetting selection...');
+        selectedWords = {};  % Ensure words are cleared
         displayGrid();
     end
-
+    
+    % Close incorrect screen and return to game grid
     function closeIncorrectScreen()
         if isvalid(fig4)  % Check if fig4 still exists before modifying it
-        fig4.Visible = 'off'; % Hide incorrect screen
-        fig3.Visible = 'on'; % show celebrate and make sure they can toggle celebrate 
+            fig4.Visible = 'off'; % Hide incorrect screen
+            fig3.Visible = 'on'; % Show correct screen
         end
         if isvalid(fig2)  % Ensure fig2 exists
-        fig2.Visible = 'on';  % Bring back the game grid
+            fig2.Visible = 'on';  % Bring back the game grid
         end
-        end 
-
-
     end
-    % End the function
-   
+end
