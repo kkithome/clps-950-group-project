@@ -85,7 +85,7 @@ function category_connections_gui()
                             '      ☆ ☆ ☆ ☆ ☆      ']);
     uilabel(fig3, ...
         'Text', celebrationArt , ...
-        'Position', [50, 550, 500, 50], ...
+        'Position', [50, 400, 500, 100], ...
         'HorizontalAlignment', 'center', ...
         'FontSize', 16); 
 
@@ -214,11 +214,15 @@ function category_connections_gui()
             fig1.Visible = 'off';
             fig2.Visible = 'off';
             fig4.Visible = 'on';
-        end
-        
-        t = timer('StartDelay', 3, 'TimerFcn', @(~,~) closeIncorrectScreen());
+
+
+            t = timer('StartDelay', 3, 'TimerFcn', @(~,~) closeIncorrectScreen());
             start(t);
             resetSelection();
+
+        end
+        
+       
     end   
     
     
@@ -232,7 +236,7 @@ function category_connections_gui()
     function closeIncorrectScreen()
         if isvalid(fig4)  % Check if fig4 still exists before modifying it
         fig4.Visible = 'off'; % Hide incorrect screen
-        fig3.Visible = 'off'; % hide celebrate 
+        fig3.Visible = 'on'; % show celebrate and make sure they can toggle celebrate 
         end
         if isvalid(fig2)  % Ensure fig2 exists
         fig2.Visible = 'on';  % Bring back the game grid
