@@ -62,10 +62,10 @@ function category_connections_gui()
     grid.RowHeight = {'4x', '4x', '4x', '4x'};
     grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
 
-    % figure fot the toggle/ category choose page
+    % figure fot the toggle/ category choose page when correct 
     fig3 = uifigure('Name', 'Correct! Select a catgory', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
-    % figure for if the connection is incorret
+    % figure for if the connection is incorret 
     fig4 = uifigure('Name', 'Incorrect', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
     uilabel(fig4, ...
