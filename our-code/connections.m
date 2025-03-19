@@ -1,11 +1,10 @@
-
 function category_connections_gui()
     % Define categories and words
     categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'}; %category 1: fruit options 
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
     categories.Colors = {'Red', 'Blue', 'Green', 'Yellow'}; % category 3: color options
     categories.Countries = {'USA', 'Canada', 'France', 'Japan'}; % category 4: countries options
-
+    
 
     % Combine all words and shuffle
     allWords = [categories.Fruits, categories.Animals, categories.Colors, categories.Countries]; 
@@ -14,19 +13,69 @@ function category_connections_gui()
     % Reshape into a 4x4 matrix for display
     shuffledWords = reshape(shuffledWords, 4, 4)';
 
-    % Display the shuffled words
-    disp('Shuffled Words (4x4 Grid):');
-    disp(shuffledWords);
+
+    % figure fot the welcome page
+    fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
+
+    % Added text to the welcome page
+    welcomeText = uilabel(fig1, ...
+        'Text', ['Welcome to Category Connections! Click the button below to Start the Game. ' ...
+        'The goal is to group four similar words together into one category!   ' ...
+        'Created by Kaluki, Selam, and Shayla'], ...
+        'Position', [50, 500, 500, 80], ...  % Increase height to 80 for better text wrapping
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16, ...
+        'WordWrap', 'on'); 
 
     % Create the GUI figure
-    fig = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 600]);
+    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 700], 'Visible', 'off');
+
+    % creates the start button and when clicked switches from the welcome page to the grid
+    startButton = uibutton(fig1, 'push', ...
+        'Text', 'Click to Play!', ...
+        'Position', [250, 200, 100, 30], ...
+        'ButtonPushedFcn', @startGame);
+
 
     % Create a grid layout for the words
-    grid = uigridlayout(fig, [4, 4]);
-    grid.RowHeight = {'1x', '1x', '1x', '1x'};
-    grid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+    grid = uigridlayout(fig2, [4, 4]);
+    grid.RowHeight = {'4x', '4x', '4x', '4x'};
+    grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
 
-    selectedButtons = false(4, 4); % try to add to submit branch to see if works 
+    % figure fot the toggle/ category choose page
+    fig3 = uifigure('Name', 'Correct! Select a catgory', 'Position', [100, 100, 600, 600], 'Visible', 'off');
+
+    % figure for if the connection is incorret
+    fig4 = uifigure('Name', 'Incorrect', 'Position', [100, 100, 600, 600], 'Visible', 'off');
+
+    Incorrect_group = uilabel(fig4, ...
+        'Text', 'Sorry, try again.' , ...
+        'Position', [50, 550, 500, 50], ...
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16); 
+    % add text to incorrect page: 
+
+    % Added text to the welcome page
+    Toggleslidetext = uilabel(fig3, ...
+        'Text', 'Correct! Select a category from the drop down!' , ...
+        'Position', [50, 550, 500, 50], ...
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16); 
+        % closes the grid and then show the toggle/ category choosing slide
+    
+
+    figure(fig1); % puts the welcome page into focus when the game is initialized
+    selectedWords = {};
+
+    function wordButtonPushed(btn)
+        if ismember(btn.Text, selectedWords) % checks to see if the word has been selected already
+            selectedWords(strcmp(selectedWords, btn.Text)) = [];
+            btn.BackgroundColor = [0.94, 0.94, 0.94];
+        elseif numel(selectedWords) < 4
+            selectedWords{end+1} = btn.Text; % if less than four words are selected than the selected word is added to the Selected Word
+            btn.BackgroundColor = [0.6, 0.8, 1]; % when added the word is higlighted in blue
+        end
+    end
 
     % Add buttons for each word in the grid
     for row = 1:4
@@ -34,41 +83,79 @@ function category_connections_gui()
             % Create a button for each word
             wordButton = uibutton(grid, 'push', ...
                 'Text', shuffledWords{row, col}, ...
-                'ButtonPushedFcn', @(btn, event) wordButtonPushed(app, btn));
+                'ButtonPushedFcn', @(btn, ~) wordButtonPushed(btn));
             wordButton.Layout.Row = row;
             wordButton.Layout.Column = col;
         end
     end
 
-     % Function to toggle button selection   % tried adding to submit branch to test
-     function toggleSelection(btn, row, col)
-        % Toggle the selection state
-        selectedButtons(row, col) = ~selectedButtons(row, col); 
-        % Change the button appearance based on selection
-            if selectedButtons(row, col)
-            btn.BackgroundColor = [0.8, 0.8, 1]; % Light blue for selected
-            else
-            btn.BackgroundColor = [0.94, 0.94, 0.94]; % Default gray for unselected
-            end
-        end  
-        %end where shayla was trying to use submit branch to mess w it 
+    % When a word is selected, the game should:
+        % if less than four words are selected:
+            % Highlight the box
+            % add the word to an going list
+        % if four words are already selected:
+            % allow the user to submit 
 
-   % Add a "Submit" button       % tried adding to submit branch to test
-   submitButton = uibutton(fig, 'push', ...
-    'Text', 'Submit', ...
-    'Position', [400, 50, 100, 30], ...
-    'ButtonPushedFcn', @(btn, event) evaluateGroups());
 
     % Add a "Close" button
-    closeButton = uibutton(fig, 'push', ...
+    closeButton = uibutton(fig2, 'push', ...
         'Text', 'Close', ...
-        'Position', [250, 50, 100, 30], ... %chooses the position,[x, y, width, height] 
-        'ButtonPushedFcn', @(btn, event) close(fig));
+        'Position', [350, 0, 100, 30], ...
+        'ButtonPushedFcn', @(btn, event) close(fig2));
 
-   
+    submitButton = uibutton(fig2, 'push', ...
+        'Text', 'Submit', ...
+        'Position', [150, 0, 100, 30], ...
+        'ButtonPushedFcn', @submit);  
+        'Visible'; 'off'; % Start hidden;
 
-    % Wait for the figure to close
-    uiwait(fig);
 
-    % End the function
+
+    function startGame(~, ~)
+        fig1.Visible = 'off';
+        fig3.Visible = 'off';
+        fig2.Visible = 'on';
+        fig4.Visible = 'off';
+
     end
+
+    % making the function that will make it so once you press four words, if they are in the same category takes you to the next "correct" screen
+    % if not, it will take you to incorrect screen
+    function submit(~, ~)
+        correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries}; %make sets of words to choose from 
+        
+        isCorrect = false; %set of words chosen 
+        for i = 1:length(correctSets) 
+            if isempty(setdiff(selectedWords, correctSets{i})) && length(selectedWords) == length(correctSets{i}) %setdiff will make it so that the order of word selection won't matter 
+                isCorrect = true;
+                break;
+            end
+        end
+            % moving from grid screen to either the correct or incorrect next screen once buttons selected. 
+        if isCorrect
+            fig1.Visible = 'off';
+            fig2.Visible = 'off';
+            fig3.Visible = 'on';
+        else
+            fig1.Visible = 'off';
+            fig2.Visible = 'off';
+            fig4.Visible = 'on';
+
+            
+            % Start a timer to hide fig4 after 5 seconds and bring back fig2
+            t = timer('StartDelay', 5, 'TimerFcn', @(~,~) closeIncorrectScreen());
+         start(t);
+        end
+
+    selectedWords = {}; % Reset selection after submission
+    end
+
+    function closeIncorrectScreen()
+        if isvalid(fig4)  % Check if fig4 still exists before modifying it
+        fig4.Visible = 'off'; % Hide incorrect screen
+        end
+        if isvalid(fig2)  % Ensure fig2 exists
+        fig2.Visible = 'on';  % Bring back the game grid
+        end
+    end
+end 
