@@ -242,3 +242,4 @@ function category_connections_gui()
 
     end
     % End the function
+
