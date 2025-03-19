@@ -19,17 +19,18 @@ function category_connections_gui()
 
     % Added text to the welcome page
     uilabel(fig1, ...
-        'Text', ['Welcome to Category Connections! Click the button below to Start the Game. ' ...
-        'The goal is to group four similar words together into one category!   ' ...
-        'Created by Kaluki, Selam, and Shayla'], ...
-        'Position', [50, 500, 500, 80], ...  % Increase height to 80 for better text wrapping
+        'Text', sprintf(['Welcome to Category Connections!\n' ...
+        'Click the button below to Start the Game.\n\n' ...
+        'The goal is to group four similar words together into one category!\n\n' ...
+        'Created by Kaluki, Selam, and Shayla']), ...
+        'Position', [50, 400, 500, 120], ...  % Increase height to 100 for better text wrapping
         'HorizontalAlignment', 'center', ...
         'FontName', 'Georgia', ...
         'FontSize', 16, ...
         'WordWrap', 'on'); 
 
     % Create the GUI figure
-    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 700], 'Visible', 'off');
+    fig2 = uifigure('Name', 'Category Connections', 'Position', [100, 100, 600, 400], 'Visible', 'off');
 
     % creates the start button and when clicked switches from the welcome page to the grid
     uibutton(fig1, 'push', ...
@@ -60,11 +61,10 @@ function category_connections_gui()
         displayGrid();
     end
 
-
-    % Create a grid layout for the words
-    grid = uigridlayout(fig2, [4, 4]);
-    grid.RowHeight = {'4x', '4x', '4x', '4x'};
-    grid.ColumnWidth = {'5x', '5x', '5x', '5x'};
+    %create grid layout for words 
+    grid = uigridlayout(fig2, [5, 4]);  % 5 rows: 4 for words, 1 for buttons
+        grid.RowHeight = {'4x', '4x', '4x', '4x', '1x'}; % Extra row for buttons
+        grid.ColumnWidth = {'5x', '5x', '5x', '5x'}; % Keep columns equal
 
     % figure fot the toggle/ category choose page
     fig3 = uifigure('Name', 'Correct! Select a catgory', 'Position', [100, 100, 600, 600], 'Visible', 'off');
@@ -259,5 +259,4 @@ function category_connections_gui()
 
     end
     % End the function
- 
-
+   
