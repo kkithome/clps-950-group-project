@@ -183,7 +183,8 @@ function category_connections_gui()
             t = timer('StartDelay', 5, 'TimerFcn', @(~,~) closeIncorrectScreen());
             start(t);
         
-            selectedWords = {}; % Reset selection after submission
+            % selectedWords = {}; % Reset selection after submission
+            displayGrid();
          end
     end
 
