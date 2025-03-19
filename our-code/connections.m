@@ -133,6 +133,19 @@ function category_connections_gui()
         'Text', 'Shuffle Words',...
         'Position', [150, 0, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) shuffleWords());
+
+     dd = uidropdown(fig3, "Items", ["Fruits", "Animals", "Countries", "Colors"]);
+     s1 = uistyle("BackgroundColor", "#ffec33"); %yellow
+     s2 = uistyle("BackgroundColor", "#8adc75"); % green
+     s3 = uistyle("BackgroundColor", "#75a9dc"); % blue
+     s4 = uistyle("BackgroundColor", "#ac75dc"); % purple
+
+     addStyle(dd, s1, "item", 3);
+     addStyle(dd, s2, "item", 2);
+     addStyle(dd, s3, "item", 1);
+     addStyle(dd, s4, "item", 4);
+
+   
    
 
 
