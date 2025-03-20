@@ -259,7 +259,7 @@ function category_connections_gui()
             fig4.Visible = 'on';
     
             % Fix for incorrect screen timeout
-            t = timer('StartDelay', 3, 'TimerFcn', @(~,~) closeIncorrectScreen());
+            t = timer('StartDelay', 2, 'TimerFcn', @(~,~) closeIncorrectScreen());
             start(t);
             resetSelection();
         end
