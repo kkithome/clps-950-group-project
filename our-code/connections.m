@@ -1,4 +1,8 @@
 function category_connections_gui()
+
+    %initializing the solved list
+    solvedList = {};
+
     % Define categories and words
     categories.Fruits = {'Apple', 'Banana', 'Orange', 'Grapes'}; %category 1: fruit options 
     categories.Animals = {'Dog', 'Cat', 'Elephant', 'Lion'}; %category 2: animal options
@@ -39,20 +43,29 @@ function category_connections_gui()
         'FontName', 'Georgia', ...
         'ButtonPushedFcn', @startGame);
 
-    function displayGrid()
-        delete(grid.Children);
-        for row = 1:4
-            for col = 1:4
-                wordButton = uibutton(grid, 'push', ...
-                'Text', shuffledWords{row, col}, ...
-                'FontName', 'Georgia', ...
-                'FontSize', 18, ...
-                'ButtonPushedFcn', @(btn, ~) wordButtonPushed(btn));
-                wordButton.Layout.Row = row;
-                wordButton.Layout.Column = col;
+        function displayGrid()
+            delete(grid.Children); % Clear the grid
+            for row = 1:4
+                for col = 1:4
+                    wordButton = uibutton(grid, 'push', ...
+                        'Text', shuffledWords{row, col}, ...
+                        'FontName', 'Georgia', ...
+                        'FontSize', 18, ...
+                        'ButtonPushedFcn', @(btn, ~) wordButtonPushed(btn));
+                    wordButton.Layout.Row = row;
+                    wordButton.Layout.Column = col;
+        
+                    % Disable the button if the word is in the solved list
+                    if ismember(shuffledWords{row, col}, solvedList)
+                        wordButton.Enable = 'off'; % Disable the button
+                        wordButton.BackgroundColor = [0.8, 0.8, 0.8]; % Gray out the button
+                    else
+                        wordButton.Enable = 'on';
+                        wordButton.BackgroundColor = [0.94, 0.94, 0.94];
+                    end
+                end
             end
         end
-    end
 
 
     function shuffleWords()
@@ -126,7 +139,6 @@ function category_connections_gui()
     end
 
 
-
     % Add a "Close" button
     uibutton(fig2, 'push', ...
         'Text', 'Close', ...
@@ -134,6 +146,8 @@ function category_connections_gui()
         'Position', [350, 15, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig2));
 
+    
+    % Add a "Submit" button
     uibutton(fig2, 'push', ...
         'Text', 'Submit', ...
         'FontName', 'Georgia', ...
@@ -141,12 +155,14 @@ function category_connections_gui()
         'ButtonPushedFcn', @submit);  
         'Visible'; 'off'; % Start hidden;
 
+    % Add a "Shuffle Words" button
     uibutton(fig2, 'push', ...
         'Text', 'Shuffle Words',...
         'FontName', 'Georgia', ...
         'Position', [150, 15, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) shuffleWords());
 
+    % Define styles for the dropdown
      s1 = uistyle("BackgroundColor", "#ffec33"); %yellow
      s2 = uistyle("BackgroundColor", "#8adc75"); % green
      s3 = uistyle("BackgroundColor", "#75a9dc"); % blue
@@ -177,29 +193,28 @@ function category_connections_gui()
                 % Correct category selected
                 uialert(fig3, 'Correct!', 'Success');
                 
-                % Display the selected category and words
-                uilabel(fig3, ...
-                    'Text', sprintf(' Category: %s\nSelected Words: %s', selectedCategory, strjoin(selectedWordSet, ', ')), ...
-                    'Position', [50, 100, 500, 100], ...
-                    'HorizontalAlignment', 'center', ...
-                    'FontSize', 14, ...
-                    'WordWrap', 'on');
+                % Add the selected words to the solved list
+                solvedList = [solvedList, selectedWordSet];
                 
-                % Transition to the main game grid after a short delay
-                t = timer('StartDelay', 3, 'TimerFcn', @(~,~) backToMain());
-                start(t);
+                % Return to the main grid
+                fig3.Visible = 'off'; % Hide the category selection screen
+                fig2.Visible = 'on'; % Show the main grid
+                
+                % Refresh the grid to disable the solved buttons
+                displayGrid();
+                
+             % Reset the selection for the next round
+                resetSelection();
             else
                 % Incorrect category selected
                 uialert(fig3, 'Incorrect, please try again.', 'Error');
-                
-                % Stay on the category selection screen to allow the player to try again
             end
             
-            % Reset the selection for the next round
-            resetSelection();
+            % Reset the dropdown value
             dd.Value = '';
         end
-    
+
+        %add a submit function
         uibutton(fig3, 'push', ...
             'Text', 'Submit', ...
             'FontName', 'Georgia', ...
@@ -216,19 +231,21 @@ function category_connections_gui()
         displayGrid();
     end
     
-    % Submit function
     function submit(~, ~)
+        % Check if the selected words match any correct set
         correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries};
-        categoryNames = fieldnames (categories);
-
-      
+        isCorrect = false;
+    
         for i = 1:length(correctSets)
             if isequal(sort(selectedWords), sort(correctSets{i})) 
                 isCorrect = true;
+                solvedList = [solvedList, selectedWords]; % Add the selected words to the solved list
+                
                 break;
             end
         end
     
+        % Handle correct and incorrect cases
         if isCorrect
             disp('Correct set selected! Moving to dropdown...');
             fig1.Visible = 'off';
@@ -246,17 +263,14 @@ function category_connections_gui()
             start(t);
             resetSelection();
         end
-    end   
-    
-    % Reset selection function
-    function resetSelection()
-        disp('Resetting selection...');
-        selectedWords = {};  % Ensure words are cleared
-        displayGrid();
     end
-    
+
+    function resetSelection()
+        selectedWords = {}; % Clear the selected words
+    end
+
     % Close incorrect screen and return to game grid
-    function closeIncorrectScreen()
+   function closeIncorrectScreen()
         if isvalid(fig4)  % Check if fig4 still exists before modifying it
             fig4.Visible = 'off'; % Hide incorrect screen
             fig3.Visible = 'on'; % Show correct screen
