@@ -85,13 +85,26 @@ function category_connections_gui()
     % figure for if the connection is incorret
     fig4 = uifigure('Name', 'Incorrect', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
+
     uilabel(fig4, ...
         'Text', 'Sorry, try again.' , ...
         'Position', [50, 550, 500, 50], ...
         'FontName', 'Georgia', ...
         'HorizontalAlignment', 'center', ...
         'FontSize', 16); 
-    % add text to incorrect page: 
+    
+
+    fig5 = uifigure('Name', 'Congratulations!', ...
+     'Position', [100, 100, 600, 600], ...
+     'Visible', 'off');
+
+     uilabel(fig5, ...
+        'Text', sprintf(['Congraulations! You have completed the game, \n\n' ...
+        'Thank you playing Category Connections.']), ...
+        'Position', [50, 400, 500, 100], ...
+        'FontName', 'Georgia', ...
+        'HorizontalAlignment', 'center', ...
+        'FontSize', 16);
 
 
 
@@ -145,7 +158,13 @@ function category_connections_gui()
         'FontName', 'Georgia', ...
         'Position', [350, 15, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig2));
-
+        
+    % Add a "Close" button on the last page
+        uibutton(fig5, 'push', ...
+        'Text', 'Close', ...
+        'FontName', 'Georgia', ...
+        'Position', [350, 15, 100, 30], ...
+        'ButtonPushedFcn', @(btn, event) close(fig5));
     
     % Add a "Submit" button
     uibutton(fig2, 'push', ...
@@ -195,16 +214,28 @@ function category_connections_gui()
                 
                 % Add the selected words to the solved list
                 solvedList = [solvedList, selectedWordSet];
+
+                if numel([categories.Fruits, categories.Animals, ...
+                    categories.Countries, categories.Colors]) == numel(unique(solvedList))
+                    fig1.Visible = 'off';
+                    fig2.Visible = 'off';
+                    fig3.Visible = 'off';
+                    fig4.Visible = 'off';
+                    fig5.Visible = 'on';
+                    endGame();
+                else
+                    % Return to the main grid
+                    fig3.Visible = 'off'; % Hide the category selection screen
+                    fig2.Visible = 'on'; % Show the main grid
                 
-                % Return to the main grid
-                fig3.Visible = 'off'; % Hide the category selection screen
-                fig2.Visible = 'on'; % Show the main grid
+                    % Refresh the grid to disable the solved buttons
+                    displayGrid();
                 
-                % Refresh the grid to disable the solved buttons
-                displayGrid();
-                
-             % Reset the selection for the next round
-                resetSelection();
+                    % Reset the selection for the next round
+                    resetSelection();
+
+                end
+
             else
                 % Incorrect category selected
                 uialert(fig3, 'Incorrect, please try again.', 'Error');
@@ -279,4 +310,13 @@ function category_connections_gui()
             fig2.Visible = 'on';  % Bring back the game grid
         end
     end
+
+    function endGame()
+        for iter = 5:-1:1
+            close(fig(iter))
+        end
+    end
+
+
+ 
 end
