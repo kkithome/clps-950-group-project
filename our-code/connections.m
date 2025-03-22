@@ -18,7 +18,7 @@ function category_connections_gui()
     shuffledWords = reshape(shuffledWords, 4, 4)';
 
 
-    % figure fot the welcome page
+    % figure for the welcome page
     fig1 = uifigure('Name', 'Welcome Page', 'Position', [100, 100, 600, 600]);
 
     % Added text to the welcome page
@@ -43,6 +43,7 @@ function category_connections_gui()
         'FontName', 'Georgia', ...
         'ButtonPushedFcn', @startGame);
 
+         % helper function for displaying the grid; used after switiching figures
         function displayGrid()
             delete(grid.Children); % Clear the grid
             for row = 1:4
@@ -67,25 +68,25 @@ function category_connections_gui()
             end
         end
 
-
+    % defines the functionality of the "Shuffle Words" button
     function shuffleWords()
         shuffledWords = allWords(randperm(length(allWords)));
         shuffledWords = reshape(shuffledWords, 4, 4);
         displayGrid();
     end
 
-    %create grid layout for words 
+    % create grid layout for words 
     grid = uigridlayout(fig2, [5, 4]);  % 5 rows: 4 for words, 1 for buttons
         grid.RowHeight = {'4x', '4x', '4x', '4x', '2x'}; % Extra row for buttons
         grid.ColumnWidth = {'5x', '5x', '5x', '5x'}; % Keep columns equal
 
-    % figure fot the toggle/ category choose page
+    % figure for the toggle/ category choose page
     fig3 = uifigure('Name', 'Correct! Select a catgory', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
     % figure for if the connection is incorret
     fig4 = uifigure('Name', 'Incorrect', 'Position', [100, 100, 600, 600], 'Visible', 'off');
 
-
+    % shown to user when they try to categorize words that are not a predefined category
     uilabel(fig4, ...
         'Text', 'Sorry, try again.' , ...
         'Position', [50, 550, 500, 50], ...
@@ -93,11 +94,12 @@ function category_connections_gui()
         'HorizontalAlignment', 'center', ...
         'FontSize', 16); 
     
-
+    % defines figure 5 which will contain congratulations message for the user
     fig5 = uifigure('Name', 'Congratulations!', ...
      'Position', [100, 100, 600, 600], ...
      'Visible', 'off');
-
+     
+    % text for the end game page; congrulates users for completeing the game
      uilabel(fig5, ...
         'Text', sprintf(['Congraulations! You have completed the game, \n\n' ...
         'Thank you for playing Category Connections.']), ...
@@ -108,12 +110,13 @@ function category_connections_gui()
 
 
 
-
+    % celeberation art, shown when the user correctl categorizes words
     celebrationArt = sprintf(['      ☆ ☆ ☆ ☆ ☆      \n' ...
                             '   ☆ (づ｡◕‿‿◕｡)づ ☆   \n' ...
                             ' ☆  Congrats!!!  ☆  \n' ...
                             '   ☆ You got it! ☆   \n' ...
                             '      ☆ ☆ ☆ ☆ ☆      ']);
+    % defines fig3 which is a figure that displays a celebration page 
     uilabel(fig3, ...
         'Text', celebrationArt , ...
         'Position', [50, 400, 500, 100], ...
@@ -125,8 +128,9 @@ function category_connections_gui()
 
 
     figure(fig1); % puts the welcome page into focus when the game is initialized
-    selectedWords = {};
+    selectedWords = {}; % initialized the selected word list
 
+   % function outlining what should happen when a button is pushed
     function wordButtonPushed(btn)
         if ismember(btn.Text, selectedWords) % checks to see if the word has been selected already
             selectedWords(strcmp(selectedWords, btn.Text)) = [];
@@ -152,7 +156,7 @@ function category_connections_gui()
     end
 
 
-    % Add a "Close" button
+    % Add a "Close" button on the grid page
     uibutton(fig2, 'push', ...
         'Text', 'Close', ...
         'FontName', 'Georgia', ...
@@ -166,7 +170,7 @@ function category_connections_gui()
         'Position', [350, 15, 100, 30], ...
         'ButtonPushedFcn', @(btn, event) close(fig5));
     
-    % Add a "Submit" button
+    % Add a "Submit" button on the grid page
     uibutton(fig2, 'push', ...
         'Text', 'Submit', ...
         'FontName', 'Georgia', ...
@@ -187,6 +191,7 @@ function category_connections_gui()
      s3 = uistyle("BackgroundColor", "#75a9dc"); % blue
      s4 = uistyle("BackgroundColor", "#ac75dc"); 
 
+    % crerates the dropdown
      function dropdownFunctionality()
         dropdownItems = {'Fruits', 'Animals', 'Colors', 'Countries'};
         dd = uidropdown(fig3, ...
@@ -200,6 +205,7 @@ function category_connections_gui()
         addStyle(dd, s3, "item", 1);
         addStyle(dd, s4, "item", 4);
     
+        % function that checks if the category the user selected is correct
         function checkDropdown(dd)
             selectedCategory = dd.Value; % Get the selected category from the dropdown
             selectedWordSet = selectedWords; % Get the selected words
@@ -253,7 +259,7 @@ function category_connections_gui()
             'ButtonPushedFcn', @(btn, ~) checkDropdown(dd));
     end
     
-    % Start game function
+    % % Start game function, displays the grid and makes sure that no other figure is visible
     function startGame(~, ~)
         fig1.Visible = 'off';
         fig3.Visible = 'off';
@@ -262,6 +268,7 @@ function category_connections_gui()
         displayGrid();
     end
     
+    % function that defines what should happen then the submit button on the grid page is pressed
     function submit(~, ~)
         % Check if the selected words match any correct set
         correctSets = {categories.Fruits, categories.Animals, categories.Colors, categories.Countries};
@@ -295,7 +302,8 @@ function category_connections_gui()
             resetSelection();
         end
     end
-
+    
+    % functions made to clear the selected words
     function resetSelection()
         selectedWords = {}; % Clear the selected words
     end
@@ -310,10 +318,10 @@ function category_connections_gui()
             fig2.Visible = 'on';  % Bring back the game grid
         end
     end
-
+     % function for ending the game
     function endGame()
-        for iter = 5:-1:1
-            close(fig(iter))
+        for iter = 5:-1:1 
+            close(fig(iter)) % iterates through all of the figures and closes them
         end
     end
 
